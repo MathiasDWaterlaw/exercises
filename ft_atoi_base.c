@@ -92,6 +92,37 @@ int powerof(int nbr, int exp)
 // AGGIUNGERE UNA FUNZIONE STR_CLEANER CHE RESTITUISCA UNICAMENTE LA STRINGA DA UTILIZZARE
 // PER LA CONVERSIONE
 
+int c_in_base(char c, char *base)
+{
+	while(*base++)
+	{
+		if(c == *base)
+		{
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
+char is_negative(char *str)
+{
+	int i = 0;
+	int counter = 0;
+	
+	while(str[i] == ' ' || str[i] == '+' || str[i] == '-')
+	{
+		if(str[i] == '-')
+		{
+			counter++;
+		}
+		
+		i++;
+	}
+	
+	return(counter % 2);
+}
+
 int ft_atoi_base(char *str, char *base)
 {
     int base_length = ft_strlen(base);
