@@ -71,6 +71,7 @@ int invalid_base(char *str) //controlla se la base inserita è corretta
     return 0;
 }
 
+//ELEVA IL NBR AL SUO EXP
 int powerof(int nbr, int exp)
 {
     int accumulator = nbr;
@@ -94,18 +95,22 @@ int powerof(int nbr, int exp)
 
 int c_in_base(char c, char *base)
 {
-	while(*base++)
+    int i = 0;
+
+	while(base[i] != '\0')
 	{
-		if(c == *base)
+		if(c == base[i])
 		{
 			return 1;
 		}
+
+        i++;
 	}
 	
 	return 0;
 }
 
-char is_negative(char *str)
+int is_negative(char *str)
 {
 	int i = 0;
 	int counter = 0;
@@ -127,48 +132,66 @@ int ft_atoi_base(char *str, char *base)
 {
     int base_length = ft_strlen(base);
     int str_length = ft_strlen(str);
+    int negative = is_negative(str);
 
     if(invalid_base(base) || base_length < 2)
     {
         printf("error: invalid base\n");
         return(0);
     }
+    
+    /* Adesso la funzione si deve occupare di ripulire la stringa principale di tutti
+     * i caratteri che non devono essere considerati nella fase finale della funzione
+     * */
 
+    int j = 0;
+    int cleaned_i = 0;
+    char cleaned_str[100];
+    
+    while(j < str_length + 1)
+    {
+        if(c_in_base(str[j], base) && cleaned_i < str_length)
+        {
+            cleaned_str[cleaned_i] = str[j];
+            cleaned_i++;
+        }
+        else 
+        {
+            cleaned_str[j] = '\0';
+        }
+
+        j++;
+    }
+    
+    printf("cleaned: - %s - ",cleaned_str);
 
     /* Questa parte della funzione si occupa di tradurre un segno in qualsiasi base 
      * nel suo equivalente decimale, utilizzando la base fornita come parametro nella funzione.
+     * Successivamente, nell'accumulatore, questo equivalente decimale viene sommato ai 
+     * precedenti/successivi, ma moliplicato per la base elevata al numero di posizione 
+     * (unità, decine, centinaia ecc)
      */
 
     int counter = 0;
     int i = 0;
-    int array_int[str_length];
+    int back_counter = ft_strlen(cleaned_str) - 1;
+    int accumulator = 0;
     
-    while(str[i] != '\0')
+    while(back_counter >= 0)
     {
         counter = 0;
         
-        while(str[i] != base[counter])
+        while(cleaned_str[back_counter] != base[counter])
         {
             counter++;
         }
 
-        array_int[i] = counter; //assegna il counter al suo posto corrispondente nell'array.
-        i++;
+        accumulator += counter * powerof(base_length, i++);
+        back_counter--;
     }
+   
+    accumulator = negative ? accumulator * -1 : accumulator;
 
-    /* Da ora la funzione moltiplica ogni numero nell'array per la sua base, per poi
-     * sommare tutto nella variabile accumulator.
-     */
-
-    int back_counter = str_length - 1;
-    int accumulator = 0;
-    int j = 0;
-    
-    while(back_counter >= 0)
-    {
-        accumulator += array_int[back_counter--] * powerof(base_length, j++);
-    }
-    
     printf("str: %s, result: %i", str, accumulator);
     printf("\n");
 
@@ -202,17 +225,19 @@ int main(void)
 
     //TEST
     ft_atoi_base("11111001010", BIN);
-    ft_atoi_base("3712", OCT);
+    ft_atoi_base(" - --3712", OCT);
     ft_atoi_base("1994", DEC);
     ft_atoi_base("07CA", HEX);
 
-    ft_atoi_base("42", WRONG_1);
+    ft_atoi_base("+ +-11111001010", BIN);
+
+    /*ft_atoi_base("42", WRONG_1);
     ft_atoi_base("42", WRONG_2);
     ft_atoi_base("42", WRONG_3);
     ft_atoi_base("42", WRONG_4);
     ft_atoi_base("42", WRONG_5);
     ft_atoi_base("42", WRONG_6);
-    ft_atoi_base("42", WRONG_7);
+    ft_atoi_base("42", WRONG_7);*/
 }
   
 
