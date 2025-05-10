@@ -148,22 +148,28 @@ int ft_atoi_base(char *str, char *base)
     int cleaned_i = 0;
     char cleaned_str[100];
     
-    while(j < str_length + 1)
+    while(j <= str_length)
     {
-        if(c_in_base(str[j], base) && cleaned_i < str_length)
+        if(c_in_base(str[j], base))
         {
             cleaned_str[cleaned_i] = str[j];
-            cleaned_i++;
+            cleaned_i++;        
         }
-        else 
+
+        if(c_in_base(str[j - 1], base) && c_in_base(str[j], base) == 0)
         {
-            cleaned_str[j] = '\0';
+            j += str_length;
+        }
+         
+        else
+        {
+            cleaned_str[j + 1] = '\0';
         }
 
         j++;
     }
-    
-    printf("cleaned: - %s - ",cleaned_str);
+    printf(" original str: \"%s\" \n", str);
+    printf(" cleaned: \"%s\" \n",cleaned_str);
 
     /* Questa parte della funzione si occupa di tradurre un segno in qualsiasi base 
      * nel suo equivalente decimale, utilizzando la base fornita come parametro nella funzione.
@@ -192,8 +198,8 @@ int ft_atoi_base(char *str, char *base)
    
     accumulator = negative ? accumulator * -1 : accumulator;
 
-    printf("str: %s, result: %i", str, accumulator);
-    printf("\n");
+    printf(" result: %i", accumulator);
+    printf("\n\n");
 
     return accumulator;
 }
@@ -213,6 +219,7 @@ int main(void)
     OCT = "01234567";
     DEC = "0123456789";
     HEX = "0123456789ABCDEF";
+    char *PV = ".,";
     
     //BASI SBAGLIATE PER CONTROLLO
     WRONG_1 = "";
@@ -228,16 +235,20 @@ int main(void)
     ft_atoi_base(" - --3712", OCT);
     ft_atoi_base("1994", DEC);
     ft_atoi_base("07CA", HEX);
+    ft_atoi_base(",,,,,..,.,.", PV);
 
-    ft_atoi_base("+ +-11111001010", BIN);
+    ft_atoi_base("+ +-11111001010AT1010", BIN);
+    ft_atoi_base(" 3712,9", OCT);
+    ft_atoi_base(" --1994d1994", DEC);
+    ft_atoi_base("      --+07CA-CA", HEX);
 
-    /*ft_atoi_base("42", WRONG_1);
+    ft_atoi_base("42", WRONG_1);
     ft_atoi_base("42", WRONG_2);
     ft_atoi_base("42", WRONG_3);
     ft_atoi_base("42", WRONG_4);
     ft_atoi_base("42", WRONG_5);
     ft_atoi_base("42", WRONG_6);
-    ft_atoi_base("42", WRONG_7);*/
+    ft_atoi_base("42", WRONG_7);
 }
   
 
