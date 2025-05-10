@@ -72,6 +72,7 @@ int invalid_base(char *str) //controlla se la base inserita è corretta
 }
 
 //ELEVA IL NBR AL SUO EXP
+//funzione matematica di potenza
 int powerof(int nbr, int exp)
 {
     int accumulator = nbr;
@@ -90,9 +91,7 @@ int powerof(int nbr, int exp)
     return accumulator;
 }
 
-// AGGIUNGERE UNA FUNZIONE STR_CLEANER CHE RESTITUISCA UNICAMENTE LA STRINGA DA UTILIZZARE
-// PER LA CONVERSIONE
-
+// Controlla che il carattere inserito come primo parametro faccia parte della base
 int c_in_base(char c, char *base)
 {
     int i = 0;
@@ -110,6 +109,8 @@ int c_in_base(char c, char *base)
 	return 0;
 }
 
+// controlla la prima parte della stringa e restituisce 1 (TRUE) se il numero finale è negativo
+// e 0 (FALSE) se il numero finale è positivo.
 int is_negative(char *str)
 {
 	int i = 0;
@@ -128,6 +129,8 @@ int is_negative(char *str)
 	return(counter % 2);
 }
 
+
+// LA FUNZIONE PRINCIPALE CHE UTILIZZA TUTTE LE ALTRE
 int ft_atoi_base(char *str, char *base)
 {
     int base_length = ft_strlen(base);
@@ -140,7 +143,7 @@ int ft_atoi_base(char *str, char *base)
         return(0);
     }
     
-    /* Adesso la funzione si deve occupare di ripulire la stringa principale di tutti
+    /* Nella prima parte si occupa di ripulire la stringa principale di tutti
      * i caratteri che non devono essere considerati nella fase finale della funzione
      * */
 
@@ -171,7 +174,7 @@ int ft_atoi_base(char *str, char *base)
     printf(" original str: \"%s\" \n", str);
     printf(" cleaned: \"%s\" \n",cleaned_str);
 
-    /* Questa parte della funzione si occupa di tradurre un segno in qualsiasi base 
+    /* Nella seconda fase si occupa di tradurre un segno in qualsiasi base 
      * nel suo equivalente decimale, utilizzando la base fornita come parametro nella funzione.
      * Successivamente, nell'accumulatore, questo equivalente decimale viene sommato ai 
      * precedenti/successivi, ma moliplicato per la base elevata al numero di posizione 
@@ -197,7 +200,6 @@ int ft_atoi_base(char *str, char *base)
     }
    
     accumulator = negative ? accumulator * -1 : accumulator;
-
     printf(" result: %i", accumulator);
     printf("\n\n");
 
