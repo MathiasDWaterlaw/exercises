@@ -72,7 +72,6 @@ int invalid_base(char *str) //controlla se la base inserita è corretta
 }
 
 //ELEVA IL NBR AL SUO EXP
-//funzione matematica di potenza
 int powerof(int nbr, int exp)
 {
     int accumulator = nbr;
@@ -91,7 +90,9 @@ int powerof(int nbr, int exp)
     return accumulator;
 }
 
-// Controlla che il carattere inserito come primo parametro faccia parte della base
+// AGGIUNGERE UNA FUNZIONE STR_CLEANER CHE RESTITUISCA UNICAMENTE LA STRINGA DA UTILIZZARE
+// PER LA CONVERSIONE
+
 int c_in_base(char c, char *base)
 {
     int i = 0;
@@ -109,8 +110,6 @@ int c_in_base(char c, char *base)
 	return 0;
 }
 
-// controlla la prima parte della stringa e restituisce 1 (TRUE) se il numero finale è negativo
-// e 0 (FALSE) se il numero finale è positivo.
 int is_negative(char *str)
 {
 	int i = 0;
@@ -129,8 +128,6 @@ int is_negative(char *str)
 	return(counter % 2);
 }
 
-
-// LA FUNZIONE PRINCIPALE CHE UTILIZZA TUTTE LE ALTRE
 int ft_atoi_base(char *str, char *base)
 {
     int base_length = ft_strlen(base);
@@ -143,38 +140,32 @@ int ft_atoi_base(char *str, char *base)
         return(0);
     }
     
-    /* Nella prima parte si occupa di ripulire la stringa principale di tutti
+    /* Adesso la funzione si deve occupare di ripulire la stringa principale di tutti
      * i caratteri che non devono essere considerati nella fase finale della funzione
      * */
 
     int j = 0;
     int cleaned_i = 0;
     char cleaned_str[100];
-    
-    while(j <= str_length)
+
+    while(j < str_length)
     {
-        if(c_in_base(str[j], base))
+        if(c_in_base(str[j], base) && cleaned_i < str_length)
         {
             cleaned_str[cleaned_i] = str[j];
-            cleaned_i++;        
+            cleaned_i++;
         }
-
-        if(c_in_base(str[j - 1], base) && c_in_base(str[j], base) == 0)
+        else 
         {
-            j += str_length;
-        }
-         
-        else
-        {
-            cleaned_str[j + 1] = '\0';
+            cleaned_str[j] = '\0';
         }
 
         j++;
     }
-    printf(" original str: \"%s\" \n", str);
-    printf(" cleaned: \"%s\" \n",cleaned_str);
+    
+    printf("- %s - ",cleaned_str);
 
-    /* Nella seconda fase si occupa di tradurre un segno in qualsiasi base 
+    /* Questa parte della funzione si occupa di tradurre un segno in qualsiasi base 
      * nel suo equivalente decimale, utilizzando la base fornita come parametro nella funzione.
      * Successivamente, nell'accumulatore, questo equivalente decimale viene sommato ai 
      * precedenti/successivi, ma moliplicato per la base elevata al numero di posizione 
@@ -200,8 +191,9 @@ int ft_atoi_base(char *str, char *base)
     }
    
     accumulator = negative ? accumulator * -1 : accumulator;
-    printf(" result: %i", accumulator);
-    printf("\n\n");
+
+    printf("str: %s, result: %i, negative: %i", str, accumulator, negative);
+    printf("\n");
 
     return accumulator;
 }
@@ -221,7 +213,6 @@ int main(void)
     OCT = "01234567";
     DEC = "0123456789";
     HEX = "0123456789ABCDEF";
-    char *PV = ".,";
     
     //BASI SBAGLIATE PER CONTROLLO
     WRONG_1 = "";
@@ -233,16 +224,10 @@ int main(void)
     WRONG_7 = "FG ASDERT";
 
     //TEST
-    ft_atoi_base("11111001010", BIN);
     ft_atoi_base(" - --3712", OCT);
     ft_atoi_base("1994", DEC);
     ft_atoi_base("07CA", HEX);
-    ft_atoi_base(",,,,,..,.,.", PV);
-
-    ft_atoi_base("+ +-11111001010AT1010", BIN);
-    ft_atoi_base(" 3712,9", OCT);
-    ft_atoi_base(" --1994d1994", DEC);
-    ft_atoi_base("      --+07CA-CA", HEX);
+    ft_atoi_base("11111001010", BIN);
 
     ft_atoi_base("42", WRONG_1);
     ft_atoi_base("42", WRONG_2);
