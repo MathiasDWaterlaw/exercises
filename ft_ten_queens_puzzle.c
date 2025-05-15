@@ -42,6 +42,7 @@ void display_matrix(int matrix[4][4], int length)
     while(i < length)
     {
         j = 0;
+        printf(" ");
 
         while(j < length)
         {
@@ -54,33 +55,41 @@ void display_matrix(int matrix[4][4], int length)
     }
 }
 
-int main(void)
-
+int ft_ten_queens_puzzle(void)
 {
-    int md_[4][4] = {{1,1,1,1}, 
-                     {1,1,1,1}, 
-                     {1,1,1,1}, 
-                     {1,1,1,1}};
+    int length = 4;
+    int matrix[length][length];
     
     int i = 0;
     int j = 0;
-
-    while(i < 4)
+    
+    //FILLING THE ARRAY;
+    while(i < length)
     {
         j = 0;
-        while(j < 4)
+        while(j < length)
         {
-            printf("%i ", md_[i][j]);
+            matrix[i][j] = 1;
             j++;
         }
-        printf("\n");
+        i++;
+    }
+    
+    i = 0;
+    while(i < length)
+    {   
+        printf("\n -%i: \n", i);
+        display_matrix(matrix, length);
         i++;
     }
 
-    display_matrix(md_[][], 4);
+    return 0;
 }
 
-
+int main(void)
+{
+    ft_ten_queens_puzzle();
+}
 
 
 
