@@ -34,9 +34,8 @@
  * The return value must be the total number of displayed solutions.
  * */
 
-const int length = 9;
 
-void display_matrix(int matrix[length][length], int length)
+/*void display_matrix(int matrix[length][length], int length)
 {
     int i = 0;
     int j = 0;
@@ -54,123 +53,52 @@ void display_matrix(int matrix[length][length], int length)
         printf("\n");
         i++;
     }
-}
+}*/
 
-void put_a_queen(int matrix[length][length], int row, int col)
+#define N 10
+
+// Controlla se alle coordinate row, col, si può inserire una regina. se si può ritorna 1;
+int is_valid(int queens[], int row, int col)
 {
-    int _row = row;
-    int _col = col;
-    
-    if(matrix[row][col] != 1)
+    int i = 0;
+
+    while(i < row)
     {
-        printf("\nerror: there's a queen here! -row: %i, -col: %i\n\n", row, col);
-        return;
+        int diag_key1 = i - queens[i];
+        int diag_key2 = i + queens[i];
+
+        if(queens[i] == col)
+        { return 0; }
+
+        if(row - col == diag_key1 || row + col == diag_key2)
+        { return 0; }
+
+        i++;
     }
 
-    matrix[row][col] = 8;
-
-    while(_row - 1 >= 0)
-    {
-        matrix[_row - 1][col] = 0;
-        _row--;
-    }
-    while(_col - 1 >= 0)
-    {
-        matrix[row][_col - 1] = 0;
-        _col--;
-    }
-    
-    _row = row;
-    _col = col;
-
-    while(_row + 1 < length)
-    {
-        matrix[_row + 1][col] = 0;
-        _row++;
-    }
-    while(_col + 1 < length)
-    {
-        matrix[row][_col + 1] = 0;
-        _col++;
-    }
-
-    //DIAGONALS
-    // L to R
-
-    _row = row;
-    _col = col;
-    while(_row - 1 >= 0 && _col - 1 >= 0)
-    {
-        matrix[_row - 1][_col - 1] = 0;
-        _row--;
-        _col--;
-    }
-
-    _row = row;
-    _col = col;
-    while(_row + 1 < length && _col + 1 < length)
-    {
-        matrix[_row + 1][_col + 1] = 0;
-        _row++;
-        _col++;
-    }
-
-    //R to L
-    _row = row;
-    _col = col;
-    while(_row - 1>= 0 && _col + 1 < length)
-    {
-        matrix[_row - 1][_col + 1] = 0;
-        _row--;
-        _col++;
-    }
-
-    _row = row;
-    _col = col;
-    while(_row + 1< length && _col - 1 >= 0)
-    {
-        matrix[_row + 1][_col - 1] = 0;
-        _row++;
-        _col--;
-    }
+    return 1;
 }
+
+
+
 
 int ft_ten_queens_puzzle(void)
 {
-    int matrix[length][length];
-    
-    int i = 0;
-    int j = 0;
-    
-    //FILLING THE ARRAY;
-    while(i < length)
-    {
-        j = 0;
-        while(j < length)
-        {
-            matrix[i][j] = 1;
-            j++;
-        }
-        i++;
-    }
+    int queens[N] = {0, 5};
+
     //==================
 
     
 
     //TESTING:
     
-    i = 0;
-    while(i < 1)
-    {   
-        printf("\n -%i: \n", i);
-        put_a_queen(matrix, 0 ,1);
-        put_a_queen(matrix, 1, 3);
-        display_matrix(matrix, length);
-        i++;
-    }
+    int test = is_valid(queens, 2, 3);
+    printf("%i", test);
 
     return 0;
 }
+
+
 
 int main(void)
 {
