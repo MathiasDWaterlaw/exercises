@@ -35,27 +35,11 @@
  * */
 
 
-/*void display_matrix(int matrix[length][length], int length)
-{
-    int i = 0;
-    int j = 0;
-    while(i < length)
-    {
-        j = 0;
-        printf(" ");
-
-        while(j < length)
-        {
-            printf("%i ", matrix[i][j]);
-            j++;
-        }
-
-        printf("\n");
-        i++;
-    }
-}*/
+// VARIABILI GLOBALI
 
 #define N 10
+int solution_count = 0;
+int queens[N];
 
 // Controlla se alle coordinate row, col, si può inserire una regina. se si può ritorna 1;
 int is_valid(int queens[], int row, int col)
@@ -80,29 +64,70 @@ int is_valid(int queens[], int row, int col)
 }
 
 
+// Due funzioni che ci servono a stampare a schermo le varie soluzioni.
+int ft_putnbr(int n)
+{
+    char buff = '0' + n;
+    return write(1, &buff, 1);
+}
+
+void print_solution(int queens[])
+{
+    int i = 0;
+
+    while(i < N)
+    {
+        ft_putnbr(queens[i]);
+        i++;
+    }
+    
+    write(1, "$", 1);
+    write(1, "\n", 1);
+}
+
+
+
+void solve(int row, int queens[])
+{
+    // CASO BASE
+    if(row == N)
+    {
+        print_solution(queens);
+        solution_count++;
+        return;
+    }
+    
+    int col = 0;
+
+    // la funzione ricorsiva si occupa di aumentare le linee, il ciclo di aumentare le colonne
+    while(col < N)
+    {
+        if(is_valid(queens, row, col))
+        {
+            queens[row] = col;
+            solve(row + 1, queens);
+        }
+
+        col++;
+    }
+
+    // QUESTO SECONDO RETURN PUò ANCHE ESSERE IMPLICITO ESSENDO LA FUNZIONE VOID
+    return;
+}
+
 
 
 int ft_ten_queens_puzzle(void)
 {
-    int queens[N] = {0, 5};
-
-    //==================
-
-    
-
-    //TESTING:
-    
-    int test = is_valid(queens, 2, 3);
-    printf("%i", test);
-
-    return 0;
+    solve(0, queens);
+    return solution_count;
 }
 
 
 
 int main(void)
 {
-    ft_ten_queens_puzzle();
+    printf("%i", ft_ten_queens_puzzle());
 }
 
 
