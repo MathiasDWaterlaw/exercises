@@ -107,31 +107,113 @@ char *str_cleaner(char *str, char *base_from)
         if(str[i - 1] == '-' || str[i - 1] == '+' || str[i - 1] == ' ')
             i++;
 
-        else if(char_in_base(str[i - 1], base_from) && char_in_base(str[i], base_from))
-        {
-            cleaned_str[j] = str[i - 1];
-            j++;
-        }
         else
-        {    
-            cleaned_str[j] = str[i - 1];
-            cleaned_str[j + 1] = '\0';
-            return cleaned_str;
+        {
+            if(char_in_base(str[i - 1], base_from) && char_in_base(str[i], base_from))
+            {
+                cleaned_str[j] = str[i - 1];
+                j++;
+            }
+            else
+            {
+                cleaned_str[j] = str[i - 1];
+                cleaned_str[j + 1] = '\0';
+                return cleaned_str;
+            }
+
+            i++;
         }
-        i++;
     }
 
     cleaned_str[str_length + 1] = '\0';
     return cleaned_str;
 }
 
+int powerof(int nbr, int exp)
+{
+    int accumulator = nbr;
+
+    if(exp == 0)
+        return 1;
+
+    while(exp > 1)
+    {
+        accumulator *= nbr;
+        exp--;
+    }
+
+    return accumulator;
+}
+
+
+int to_decimal(char *str, char *base)
+
+{
+    int i, counter, counter_back, base_length, accumulator;
+
+    i = 0;
+    counter_back = str_len(str) - 1;
+    base_length = str_len(base);
+    accumulator = 0;
+
+    while(counter_back >= 0)
+    {
+        counter = 0;
+        
+        while(str[counter_back] != base[counter])
+            counter++;
+        
+        accumulator += counter * powerof(base_length, i++);
+        counter_back--;
+    }
+    
+    return accumulator;
+}
+
+
+char *ft_convert_base(char *nbr, char *base_from, char *base_to)
+{
+    char *return_str, *cleaned_str;
+    int nbr_negative, decimal_nbr;
+
+    if(base_valid(base_from) == 0 && base_valid(base_to) == 0)
+        return(return_str = NULL);
+    
+    nbr_negative = is_negative(nbr);
+    cleaned_str = str_cleaner(nbr, base_from);
+    decimal_nbr = to_decimal(cleaned_str, base_from);
+
+  
+    free(cleaned_str);
+    cleaned_str = NULL;
+    
+    printf("decimal conversion: %i", decimal_nbr);
+
+    return(return_str = "mathias");
+}
+
+
+
 // TESTING
 int main(void)
 {
     char *base_from = "0123456789";
-    char *cleaned_str = str_cleaner("-- ++ 1994,456", base_from);
+    char *WRONG_BASE = "-0123455";
+    char *WRONG_BASE_2 = "001";
+    char *cleaned_str = str_cleaner(" - ++1994-56", base_from);
+    char *positive = "-- +987";
+    char *negative = " --- 34985";
 
-    printf(cleaned_str);
+    printf("\n cleaned string: %s\n 1 - Valid base: %i\n", cleaned_str, base_valid(WRONG_BASE));
+    //printf(" 2 - Valid base: %i\n", base_valid(WRONG_BASE_2));
+    //printf(" 3 - Valid base: %i\n", base_valid(base_from));
+    //printf(" is negative: %i\n", is_negative(positive));
+    //printf(" is negative: %i\n", is_negative(negative));
+
+    char *test = ft_convert_base("  ---1994fg2984", "0123456789", "01");
+
+    free(cleaned_str);
+    cleaned_str = NULL;
 }
 
 
