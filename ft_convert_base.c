@@ -24,6 +24,9 @@
  *      char *ft_convert_base(char *nbr, char *base_from, char *base_to);
  * */
 
+const int int_max = 2147483647;
+const int int_min = (-2147483648);
+
 // CONTROLLA LA LUNGHEZZA DI UNA STRINGA
 int str_len(char *str)
 {
@@ -94,13 +97,10 @@ int char_in_base(char c, char *base)
 // RIPULISCE LA STRINGA DA TUTTI I CARATTERI SUPERFLUI E RITORNA LA STRINGA RIPULITA
 char *str_cleaner(char *str, char *base_from)
 {
-    int i, j, str_length;
-    char *cleaned_str;
-
-    str_length = str_len(str);
-    cleaned_str = (char *)malloc(str_length + 1);
-    i = 1;
-    j = 0;
+    int i = 1;
+    int j = 0;
+    int str_length = str_len(str);
+    char *cleaned_str = (char *)malloc(str_length + 1);
 
     while(i - 1 < str_length)
     {
@@ -110,10 +110,8 @@ char *str_cleaner(char *str, char *base_from)
         else
         {
             if(char_in_base(str[i - 1], base_from) && char_in_base(str[i], base_from))
-            {
-                cleaned_str[j] = str[i - 1];
-                j++;
-            }
+                cleaned_str[j++] = str[i - 1];
+            
             else
             {
                 cleaned_str[j] = str[i - 1];
@@ -124,7 +122,6 @@ char *str_cleaner(char *str, char *base_from)
             i++;
         }
     }
-
     cleaned_str[str_length + 1] = '\0';
     return cleaned_str;
 }
@@ -138,6 +135,9 @@ int powerof(int nbr, int exp)
 
     while(exp > 1)
     {
+        if(accumulator > int_max / nbr)
+            return -1;
+
         accumulator *= nbr;
         exp--;
     }
@@ -147,27 +147,81 @@ int powerof(int nbr, int exp)
 
 
 int to_decimal(char *str, char *base)
-
 {
-    int i, counter, counter_back, base_length, accumulator;
-
-    i = 0;
-    counter_back = str_len(str) - 1;
-    base_length = str_len(base);
-    accumulator = 0;
+    int i = 0;
+    int counter_back = str_len(str) - 1;
+    int base_length = str_len(base);
+    int accumulator = 0;
 
     while(counter_back >= 0)
     {
-        counter = 0;
+        int counter = 0;
         
-        while(str[counter_back] != base[counter])
+        while(str[counter_back] != base[counter] && counter < base_length)
             counter++;
         
-        accumulator += counter * powerof(base_length, i++);
+        if(counter == base_length)
+            return -1;
+        
+        int power = powerof(base_length, i);
+
+        if(power < 0 || counter > (int_max - accumulator) / power)
+            return -1;
+
+        accumulator += counter * power;
         counter_back--;
+        i++;
     }
     
     return accumulator;
+}
+
+
+int calc_memo(int nbr, int base_len)
+{
+    int length = 0;
+
+    if(nbr == 0)
+        return 1;
+
+    while(nbr > 0)
+    {
+        nbr /= base_len;
+        length++;
+    }
+
+    return length;
+}
+
+
+char *to_base(int nbr, int negative, char *base_to)
+{
+    int base_length = str_len(base_to);
+    int size = calc_memo(nbr, base_length);
+    int module;
+    char *final_str;
+
+    if(negative)
+        final_str = (char *)malloc(size + 2);
+    else
+        final_str = (char *)malloc(size + 1);
+
+    final_str[size] = '\0';
+
+    while(--size >= 0)
+    {
+        module = nbr % base_length;
+        nbr /= base_length;
+        final_str[size] = base_to[module];
+
+        if(size == 0 && negative)
+            final_str[size] = '-';
+    }
+    
+    if(!final_str)
+        return NULL;
+
+    return final_str;
 }
 
 
@@ -182,14 +236,22 @@ char *ft_convert_base(char *nbr, char *base_from, char *base_to)
     nbr_negative = is_negative(nbr);
     cleaned_str = str_cleaner(nbr, base_from);
     decimal_nbr = to_decimal(cleaned_str, base_from);
-
-  
+    
     free(cleaned_str);
     cleaned_str = NULL;
     
-    printf("decimal conversion: %i", decimal_nbr);
+    if(decimal_nbr == -1)
+        return(nbr_negative ? "-2147483648" : "2147483647");
+    
+    return_str = to_base(decimal_nbr, nbr_negative, base_to);
 
-    return(return_str = "mathias");
+    printf("\n string injected: \"%s\"\n", nbr);
+    printf(" Base from: %s\n", base_from);
+    printf(" Base to: %s\n", base_to);
+    printf(" Decimal conversion: %i\n", decimal_nbr);
+    printf(" Returned string: %s", return_str);
+
+    return return_str;
 }
 
 
@@ -197,23 +259,8 @@ char *ft_convert_base(char *nbr, char *base_from, char *base_to)
 // TESTING
 int main(void)
 {
-    char *base_from = "0123456789";
-    char *WRONG_BASE = "-0123455";
-    char *WRONG_BASE_2 = "001";
-    char *cleaned_str = str_cleaner(" - ++1994-56", base_from);
-    char *positive = "-- +987";
-    char *negative = " --- 34985";
 
-    printf("\n cleaned string: %s\n 1 - Valid base: %i\n", cleaned_str, base_valid(WRONG_BASE));
-    //printf(" 2 - Valid base: %i\n", base_valid(WRONG_BASE_2));
-    //printf(" 3 - Valid base: %i\n", base_valid(base_from));
-    //printf(" is negative: %i\n", is_negative(positive));
-    //printf(" is negative: %i\n", is_negative(negative));
-
-    char *test = ft_convert_base("  ---1994fg2984", "0123456789", "01");
-
-    free(cleaned_str);
-    cleaned_str = NULL;
+    ft_convert_base("  ---7CA/-2984", "0123456789ABCDEF", "01");
 }
 
 
